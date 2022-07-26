@@ -1,0 +1,92 @@
+@import "./assets/styles/null.scss";
+
+body {
+  background-color: #F4F4F4 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#root {
+  height: 100%;
+}
+
+.container {
+  display: flex;
+  height: calc(100% - 66px);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  position: relative;
+  margin-bottom: 10px;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 30px;
+  text-align: center;
+  color: #747376;
+}
+
+.loading:after {
+  overflow: hidden;
+  display: absolute;
+  vertical-align: bottom;
+  animation: ellipsis 2s infinite;
+  content: "\2026"; /* ascii code for the ellipsis character */
+  position: absolute;
+  bottom: 0;
+  left: 100%;
+}
+@keyframes ellipsis {
+  from {
+      width: 2px;
+  }
+  to {
+      width: 15px;
+  }
+}
+
+.message {
+  margin-bottom: 14px;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 19px;
+  text-align: center;
+  color: #919191;
+}
+
+.actionButton {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  margin-bottom: 14px;
+  
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  
+  text-align: center;
+  
+  color: #D9304F;
+  background: none;
+}
+
+.actionButton {
+  color: #be2d48;
+}
