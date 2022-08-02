@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Bridge, { IDappStateProps } from '@dapplets/dapplet-overlay-bridge';
 import { IBridge, IStorage } from './types';
 import Form from './Form';
@@ -29,9 +29,9 @@ export default (props: IDappStateProps<IStorage>) => {
     if (requestId >= 0) {
       changeSharedState?.({ madeRequest: true });
       const result = await bridge.waitForRequestResolve(requestId);
-      console.log('+++ result +++', result);
+      // console.log('+++ result +++', result);
       if (result === 'approved' && sharedState.global) {
-        console.log('+++ here!!! +++');
+        // console.log('+++ here!!! +++');
         bridge.updateUserConnectedAccounts(sharedState.global.userTwitterId);
       }
     }
@@ -45,9 +45,9 @@ export default (props: IDappStateProps<IStorage>) => {
     if (requestId >= 0) {
       changeSharedState?.({ madeRequest: true });
       const result = await bridge.waitForRequestResolve(requestId);
-      console.log('+++ result +++', result);
+      // console.log('+++ result +++', result);
       if (result === 'approved' && sharedState.global) {
-        console.log('+++ here!!! +++');
+        // console.log('+++ here!!! +++');
         bridge.updateUserConnectedAccounts(sharedState.global.userTwitterId);
       }
     }
@@ -70,7 +70,7 @@ export default (props: IDappStateProps<IStorage>) => {
             title='Processing'
             buttonLabel='Log out'
             action={handleLogOut}
-            loading={isWaiting}
+            loading={true}
           >
             <p>The Oracle needs some time to verifiy your account. Check the status in your list of connected accounts</p>
           </Form>

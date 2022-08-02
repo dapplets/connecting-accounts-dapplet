@@ -127,7 +127,7 @@ export default class ConnectingAccountsDapplet {
             user: state.global?.userTwitterFullname.value
           }
         );
-        console.log('+++ requestId +++', requestId);
+        // console.log('+++ requestId +++', requestId);
         return requestId;
       } catch (err) {
         console.log('Cannot get Connected Accounts. ERROR:', err);
@@ -142,7 +142,7 @@ export default class ConnectingAccountsDapplet {
       try {
         const connectedAccountsService = Core.connectedAccounts();
         const requestStatus = await connectedAccountsService.getRequestStatus(id);
-        console.log('requestStatus:', requestStatus)
+        // console.log('requestStatus:', requestStatus)
         if (requestStatus === 'pending') {
           await new Promise((res) => setTimeout(res, 5000));
           return waitForRequestResolve(id);
