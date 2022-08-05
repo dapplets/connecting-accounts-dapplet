@@ -78,8 +78,8 @@ export default class ConnectingAccountsDapplet {
 
     const updateUserConnectedAccounts = async (name: string) => {
       const connectedAccountsIds = await getConnectedAccounts(name, 'twitter');
-      if (connectedAccountsIds.length !== state[name].connectedAccounts.value.length
-        || !connectedAccountsIds.every((v, i) => v === state[name].connectedAccounts.value[i])) {
+      if (connectedAccountsIds.length !== state[name].connectedAccounts.value?.length
+        || !connectedAccountsIds.every((v, i) => v === state[name].connectedAccounts.value?.[i])) {
         if ((!connectedAccountsIds || connectedAccountsIds.length !== 0)) {
           state[name].connectedAccounts.next(connectedAccountsIds);
           state[name].hide.next(false);
