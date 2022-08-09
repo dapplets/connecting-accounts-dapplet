@@ -111,17 +111,17 @@ export default class ConnectingAccountsDapplet {
     const makeConectionRequest = (isUnlink: boolean) => async () => {
       try {
         const connectedAccountsService = Core.connectedAccounts();
-        const minStakeAmount = await connectedAccountsService.getMinStakeAmount();
         const requestId = await connectedAccountsService.requestVerification(
           {
             firstAccountId: state.global?.userTwitterId.value,
             firstOriginId: 'twitter',
+            firstAccountImage: this.adapter.getCurrentUser().img,
             secondAccountId: state.global?.userNearId.value,
             secondOriginId: 'near/testnet',
+            secondAccountImage: null,
             firstProofUrl: 'https://twitter.com/' + state.global?.userTwitterId.value,
             isUnlink
           },
-          minStakeAmount,
           {
             type: 'twitter/near-testnet',
             user: state.global?.userTwitterFullname.value
