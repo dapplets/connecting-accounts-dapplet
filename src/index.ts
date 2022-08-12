@@ -67,8 +67,7 @@ export default class ConnectingAccountsDapplet {
 
     const getConnectedAccounts = async (accountId: string, originId: string) => {
       try {
-        const connectedAccountsService = Core.connectedAccounts();
-        const connectedAccounts = await connectedAccountsService.getConnectedAccounts(accountId, originId);
+        const connectedAccounts = await Core.connectedAccounts.getConnectedAccounts(accountId, originId);
         const connectedAccountsIds = connectedAccounts.flat().map(a => a.id.split('/')[0]);
         return connectedAccountsIds;
       } catch (err) {
@@ -92,8 +91,7 @@ export default class ConnectingAccountsDapplet {
 
     const getPendingRequestsIds = async () => {
       try {
-        const connectedAccountsService = Core.connectedAccounts();
-        return connectedAccountsService.getPendingRequests();
+        return Core.connectedAccounts.getPendingRequests();
       } catch (err) {
         console.log('Cannot get Pending Connecting Requests. ERROR:', err);
       }
@@ -101,8 +99,7 @@ export default class ConnectingAccountsDapplet {
 
     const getVerificationRequest = async (id: number) => {
       try {
-        const connectedAccountsService = Core.connectedAccounts();
-        return connectedAccountsService.getVerificationRequest(id);
+        return Core.connectedAccounts.getVerificationRequest(id);
       } catch (err) {
         console.log('Cannot get Connecting Verification Request. ERROR:', err);
       }
@@ -110,8 +107,7 @@ export default class ConnectingAccountsDapplet {
 
     const makeConectionRequest = (isUnlink: boolean) => async () => {
       try {
-        const connectedAccountsService = Core.connectedAccounts();
-        const requestId = await connectedAccountsService.requestVerification(
+        const requestId = await Core.connectedAccounts.requestVerification(
           {
             firstAccountId: state.global?.userTwitterId.value,
             firstOriginId: 'twitter',
@@ -140,8 +136,7 @@ export default class ConnectingAccountsDapplet {
 
     const waitForRequestResolve = async (id: number): Promise<any> => {
       try {
-        const connectedAccountsService = Core.connectedAccounts();
-        const requestStatus = await connectedAccountsService.getRequestStatus(id);
+        const requestStatus = await Core.connectedAccounts.getRequestStatus(id);
         // console.log('requestStatus:', requestStatus)
         if (requestStatus === 'pending') {
           await new Promise((res) => setTimeout(res, 5000));
@@ -188,7 +183,7 @@ export default class ConnectingAccountsDapplet {
     });
 
     const { avatarBadge } = this.adapter.exports;
-    const addBadge = (icon: string) => async (ctx: { authorUsername: string }) => {
+    const addBadge = (context: 'POST' | 'PROFILE') => async (ctx: { authorUsername: string }) => {
       if (!ctx.authorUsername) return;
       let connectedAccountsIds = state[ctx.authorUsername]?.connectedAccounts.value;
       if (connectedAccountsIds === null) {
@@ -205,15 +200,15 @@ export default class ConnectingAccountsDapplet {
           tooltip: state[ctx.authorUsername]?.connectedAccounts,
           vertical:	'bottom',
           horizontal:	'left',
-          img: icon,
-          basic: true,
+          img: context === 'POST' ? ICON_SMALL : ICON,
+          basic: context === 'POST',
           hidden: state[ctx.authorUsername]?.hide,
         },
       })
     };
     this.adapter.attachConfig({
-      PROFILE: addBadge(ICON),
-      POST: addBadge(ICON_SMALL)
+      PROFILE: addBadge('PROFILE'),
+      POST: addBadge('POST')
     });
   }
 }
