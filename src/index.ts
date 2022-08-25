@@ -21,10 +21,12 @@ export default class ConnectingAccountsDapplet {
     };
     const state = Core.state(defaultState);
 
-    const user: { username: string, fullname: string } = this.adapter.getCurrentUser();
-    if (!user) return;
-    state.global.userTwitterId.next(user.username);
-    state.global.userTwitterFullname.next(user.fullname);
+    const updateTwitterUserInfo = () => {
+      const user: { username: string, fullname: string } = this.adapter.getCurrentUser()
+      if (!user) return
+      state.global.userTwitterId.next(user.username)
+      state.global.userTwitterFullname.next(user.fullname)
+    }
 
     const checkWalletConnection = async () => {
       const prevSessions = await Core.sessions();
@@ -36,6 +38,8 @@ export default class ConnectingAccountsDapplet {
         state.global.userNearId.next('');
       }
     };
+
+    updateTwitterUserInfo()
     await checkWalletConnection();
 
     const login = async () => {
@@ -50,9 +54,7 @@ export default class ConnectingAccountsDapplet {
         }
         state.global.userNearId.next(wallet.accountId);
         return wallet.accountId;
-      } catch (err) {
-        console.log('Login was denied', err);
-      }
+      } catch (err) {}
     };
 
     const logout = async () => {
@@ -60,9 +62,7 @@ export default class ConnectingAccountsDapplet {
         const sessions = await Core.sessions();
         sessions.forEach(x => x.logout());
         state.global.userNearId.next('');
-      } catch (err) {
-        console.log('Cannot log out.', err);
-      }
+      } catch (err) {}
     };
 
     const getConnectedAccounts = async (accountId: string, originId: string) => {
@@ -70,9 +70,7 @@ export default class ConnectingAccountsDapplet {
         const connectedAccounts = await Core.connectedAccounts.getConnectedAccounts(accountId, originId);
         const connectedAccountsIds = connectedAccounts.flat().map(a => a.id.split('/')[0]);
         return connectedAccountsIds;
-      } catch (err) {
-        console.log('Cannot get Connected Accounts. ERROR:', err);
-      }
+      } catch (err) {}
     };
 
     const updateUserConnectedAccounts = async (name: string) => {
@@ -92,20 +90,17 @@ export default class ConnectingAccountsDapplet {
     const getPendingRequestsIds = async () => {
       try {
         return Core.connectedAccounts.getPendingRequests();
-      } catch (err) {
-        console.log('Cannot get Pending Connecting Requests. ERROR:', err);
-      }
+      } catch (err) {}
     };
 
     const getVerificationRequest = async (id: number) => {
       try {
         return Core.connectedAccounts.getVerificationRequest(id);
-      } catch (err) {
-        console.log('Cannot get Connecting Verification Request. ERROR:', err);
-      }
+      } catch (err) {}
     };
 
-    const makeConectionRequest = (isUnlink: boolean) => async () => {
+    const makeConnectionRequest = (isUnlink: boolean) => async () => {
+      updateTwitterUserInfo()
       try {
         const requestId = await Core.connectedAccounts.requestVerification(
           {
@@ -123,16 +118,13 @@ export default class ConnectingAccountsDapplet {
             user: state.global?.userTwitterFullname.value
           }
         );
-        // console.log('+++ requestId +++', requestId);
+        if (requestId === -1) return makeConnectionRequest(isUnlink)();
         return requestId;
-      } catch (err) {
-        console.log('Cannot get Connected Accounts. ERROR:', err);
-      }
+      } catch (err) {}
     };
 
-    const connectAccounts = makeConectionRequest(false);
-
-    const disconnectAccounts = makeConectionRequest(true);
+    const connectAccounts = makeConnectionRequest(false);
+    const disconnectAccounts = makeConnectionRequest(true);
 
     const waitForRequestResolve = async (id: number): Promise<any> => {
       try {
@@ -145,26 +137,20 @@ export default class ConnectingAccountsDapplet {
           state.global.madeRequest.next(false);
           return requestStatus;
         }
-      } catch (err) {
-        console.log('Cannot get request status. ERROR:', err);
-      }
+      } catch (err) {}
     };
 
-    const overlay = Core.overlay<IBridge>({ name: 'connecting-accounts-overlay', title: 'Connecting Accounts' })
-      .useState(state)
-      .declare({ login, logout, connectAccounts, disconnectAccounts, waitForRequestResolve, updateUserConnectedAccounts });
-
-    Core.onAction(async () => {
+    const updateAll = async () => {
+      updateTwitterUserInfo()
       await checkWalletConnection();
-
-      await updateUserConnectedAccounts(user.username);
+      await updateUserConnectedAccounts(state.global.userTwitterId.value);
 
       if (state.global.userNearId.value !== '') {
         const pendingRequestsIds = await getPendingRequestsIds();
         const requests = await Promise.all(pendingRequestsIds.map((pendingRequest) => getVerificationRequest(pendingRequest)));
         let madeRequest = false;
         let madeRequestId = -1;
-        const twitterId = user.username + '/twitter';
+        const twitterId = state.global.userTwitterId.value + '/twitter';
         const nearId = state.global.userNearId.value + '/near/testnet';
         requests.forEach((request, i) => {
           if ((request.firstAccount === twitterId && request.secondAccount === nearId)
@@ -178,9 +164,16 @@ export default class ConnectingAccountsDapplet {
         }
         if (madeRequest && madeRequestId !== -1) waitForRequestResolve(madeRequestId);
       }
-      
-      overlay.open();
-    });
+    }
+
+    const overlay = Core.overlay<IBridge>({ name: 'connecting-accounts-overlay', title: 'Connecting Accounts' })
+      .useState(state)
+      .declare({ login, logout, connectAccounts, disconnectAccounts, waitForRequestResolve, updateUserConnectedAccounts, updateAll });
+
+    Core.onAction(async () => {
+      overlay.open()
+      updateAll()
+    })
 
     const { avatarBadge } = this.adapter.exports;
     const addBadge = (context: 'POST' | 'PROFILE') => async (ctx: { authorUsername: string }) => {

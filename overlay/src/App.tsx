@@ -29,9 +29,7 @@ export default (props: IDappStateProps<IStorage>) => {
     if (requestId >= 0) {
       changeSharedState?.({ madeRequest: true });
       const result = await bridge.waitForRequestResolve(requestId);
-      // console.log('+++ result +++', result);
       if (result === 'approved' && sharedState.global) {
-        // console.log('+++ here!!! +++');
         bridge.updateUserConnectedAccounts(sharedState.global.userTwitterId);
       }
     }
@@ -45,56 +43,70 @@ export default (props: IDappStateProps<IStorage>) => {
     if (requestId >= 0) {
       changeSharedState?.({ madeRequest: true });
       const result = await bridge.waitForRequestResolve(requestId);
-      // console.log('+++ result +++', result);
       if (result === 'approved' && sharedState.global) {
-        // console.log('+++ here!!! +++');
         bridge.updateUserConnectedAccounts(sharedState.global.userTwitterId);
       }
     }
     setIsWaiting(false);
   };
 
+  const handleUpdate = async (e: any) => {
+    e.preventDefault()
+    setIsWaiting(true);
+    await bridge.updateAll()
+    setIsWaiting(false);
+  }
+
   return sharedState && !!sharedState.global && (
     <div className='container'>
-      {sharedState.global.userNearId === ''
+      {sharedState.global.userTwitterId === ''
         ? <Form
-          title='Start connection'
-          buttonLabel='Login'
-          action={handleLogIn}
+          title='Connecting Accounts'
+          buttonLabel='Update'
+          action={handleUpdate}
           loading={isWaiting}
         >
-          <p>To connect <b>@{sharedState.global.userTwitterId}</b> to some NEAR wallet you need to log in</p>
+          <p>To start you have to sign in to Twitter</p>
         </Form>
-        : sharedState.global.madeRequest
+        : sharedState.global.userNearId === ''
           ? <Form
-            title='Processing'
-            buttonLabel='Log out'
-            action={handleLogOut}
-            loading={true}
+            title='Start connection'
+            buttonLabel='Login'
+            action={handleLogIn}
+            loading={isWaiting}
           >
-            <p>The Oracle needs some time to verifiy your account. Check the status in your list of connected accounts</p>
+            <p>To connect <b>@{sharedState.global.userTwitterId}</b> to some NEAR wallet you need to log in</p>
           </Form>
-          : sharedState[sharedState.global.userTwitterId]?.connectedAccounts?.includes(sharedState.global.userNearId)
+          : sharedState.global.madeRequest
             ? <Form
-              title='Your accounts are linked'
-              buttonLabel='Disconnect accounts'
-              action={handleDisconnectAccounts}
-              buttonLabel2='Log out'
-              action2={handleLogOut}
-              loading={isWaiting}
+              title='Processing'
+              buttonLabel='Log out'
+              action={handleLogOut}
+              loading={true}
             >
-              <p>You have already connected <b>@{sharedState.global.userTwitterId}</b> to <b>{sharedState.global.userNearId}</b>. You can disconnect these accounts or log in with another NEAR wallet</p>
+              <p>The Oracle needs some time to verifiy your account. Check the status in your list of connected accounts</p>
             </Form>
-            : <Form
-              title='Start connection'
-              buttonLabel='Connect accounts'
-              action={handleConnectAccounts}
-              buttonLabel2='Log out'
-              action2={handleLogOut}
-              loading={isWaiting}
-            >
-              <p>You can connect <b>@{sharedState.global.userTwitterId}</b> to <b>{sharedState.global.userNearId}</b></p>
-            </Form>}
+            : sharedState[sharedState.global.userTwitterId]?.connectedAccounts?.includes(sharedState.global.userNearId)
+              ? <Form
+                title='Your accounts are linked'
+                buttonLabel='Disconnect accounts'
+                action={handleDisconnectAccounts}
+                buttonLabel2='Log out'
+                action2={handleLogOut}
+                loading={isWaiting}
+              >
+                <p>You have already connected <b>@{sharedState.global.userTwitterId}</b> to <b>{sharedState.global.userNearId}</b>. You can disconnect these accounts or log in with another NEAR wallet</p>
+              </Form>
+              : <Form
+                title='Start connection'
+                buttonLabel='Connect accounts'
+                action={handleConnectAccounts}
+                buttonLabel2='Log out'
+                action2={handleLogOut}
+                loading={isWaiting}
+              >
+                <p>You can connect <b>@{sharedState.global.userTwitterId}</b> to <b>{sharedState.global.userNearId}</b></p>
+              </Form>}
     </div>
   );
 };

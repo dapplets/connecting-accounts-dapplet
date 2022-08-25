@@ -23,4 +23,5 @@ export interface IBridge {
   disconnectAccounts: () => Promise<number>
   waitForRequestResolve: (id: number) => Promise<"not found" | "approved" | "rejected">
   updateUserConnectedAccounts: (name: string) => Promise<void>
+  updateAll: () => Promise<void>
 }
