@@ -86,7 +86,7 @@ export default (props: IDappStateProps<IStorage>) => {
             >
               <p>The Oracle needs some time to verifiy your account. Check the status in your list of connected accounts</p>
             </Form>
-            : sharedState[sharedState.global.userTwitterId]?.connectedAccounts?.includes(sharedState.global.userNearId)
+            : sharedState[sharedState.global.userTwitterId]?.connectedAccounts?.map(x => x.name).includes(sharedState.global.userNearId)
               ? <Form
                 title='Your accounts are linked'
                 buttonLabel='Disconnect accounts'

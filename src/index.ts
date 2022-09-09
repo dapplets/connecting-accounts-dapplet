@@ -1,7 +1,8 @@
 import { } from '@dapplets/dapplet-extension';
-import ICON from './icons/connected-accounts.svg';
-import ICON_SMALL from './icons/connected-accounts-small.svg';
-import { IBridge, IStorage } from './types';
+import NEAR_ICON from './icons/near_black.svg';
+import NEAR_ICON_SMALL from './icons/near_black_small.svg';
+import TWITTER_ICON from './icons/twitter-icon.svg';
+import { IBridge, IConnectedAccountUser, IStorage } from './types';
 
 @Injectable
 export default class ConnectingAccountsDapplet {
@@ -68,8 +69,21 @@ export default class ConnectingAccountsDapplet {
     const getConnectedAccounts = async (accountId: string, originId: string) => {
       try {
         const connectedAccounts = await Core.connectedAccounts.getConnectedAccounts(accountId, originId);
-        const connectedAccountsIds = connectedAccounts.flat().map(a => a.id.split('/')[0]);
-        return connectedAccountsIds;
+        const accounts = connectedAccounts
+          .flat()
+          .map(a => {
+            const [name, origin1, origin2] = a.id.split('/')
+            const origin = origin2 === undefined ? origin1 : origin1 + '/' + origin2
+            const img = origin1 === 'near' ? NEAR_ICON : TWITTER_ICON
+            const account: IConnectedAccountUser = {
+              name,
+              img,
+              origin,
+              accountActive: a.status.isMain
+            }
+            return account
+          });
+        return accounts;
       } catch (err) {}
     };
 
@@ -190,12 +204,15 @@ export default class ConnectingAccountsDapplet {
       }
       return avatarBadge({
         DEFAULT: {
-          tooltip: state[ctx.authorUsername]?.connectedAccounts,
+          accounts: state[ctx.authorUsername]?.connectedAccounts,
+          showAccounts: false,
+          username: ctx.authorUsername,
           vertical:	'bottom',
           horizontal:	'left',
-          img: context === 'POST' ? ICON_SMALL : ICON,
+          img: context === 'POST' ? NEAR_ICON_SMALL : NEAR_ICON,
           basic: context === 'POST',
           hidden: state[ctx.authorUsername]?.hide,
+          exec: (_, me) => { me.showAccounts = !me.showAccounts },
         },
       })
     };

@@ -7,7 +7,7 @@ export type Account = {
 
 export interface IStorage {
   hide: boolean
-  connectedAccounts: string[]
+  connectedAccounts: IConnectedAccountUser[]
 
   // for global:
   userTwitterId: string
@@ -24,4 +24,11 @@ export interface IBridge {
   waitForRequestResolve: (id: number) => Promise<"not found" | "approved" | "rejected">
   updateUserConnectedAccounts: (name: string) => Promise<void>
   updateAll: () => Promise<void>
+}
+
+export interface IConnectedAccountUser {
+  img: string
+  name: string
+  origin: string
+  accountActive: boolean
 }

@@ -2,7 +2,7 @@ import { MouseEventHandler } from 'react';
 
 export interface IStorage {
   hide: boolean
-  connectedAccounts: string[]
+  connectedAccounts: IConnectedAccountUser[]
 
   // for global:
   userTwitterId: string
@@ -29,4 +29,11 @@ export interface IFormProps {
   action2?: MouseEventHandler<HTMLButtonElement>
   loading: boolean
   children: React.ReactElement
+}
+
+export interface IConnectedAccountUser {
+  img: string
+  name: string
+  origin: string
+  accountActive: boolean
 }
