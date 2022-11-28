@@ -4,8 +4,8 @@
   "description": "This dapplet allows you to link your accounts using the Connected Accounts service",
   "main": "lib/index.js",
   "scripts": {
-    "postinstall": "cd overlay && npm i",
-    "start": "concurrently -c \"yellow,blue\" -n \"dapplet,overlay\" \"rollup -w --config rollup.config.js\" \"cd overlay && npm start\"",
+    "postinstall": "concurrently -c \"blue,green\" -n \"overlay,virtual-adapter\" \"cd overlay && npm i\" \"cd ca-virtual-adapter && npm i\"",
+    "start": "concurrently -c \"yellow,blue,green\" -n \"dapplet,overlay,virtual-adapter\" \"rollup -w --config rollup.config.js\" \"cd overlay && npm start\" \"cd ca-virtual-adapter && npm start\"",
     "build": "rollup --config rollup.config.js",
     "prettify": "npx prettier --write .",
     "lint": "npx eslint ."
