@@ -1,6 +1,6 @@
 {
   "name": "connecting-accounts-dapplet",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "This dapplet allows you to link your accounts using the Connected Accounts service",
   "main": "lib/index.js",
   "scripts": {

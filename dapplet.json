@@ -1,15 +1,25 @@
 {
-  "name": { "$ref": "package.json#/name" },
+  "name": {
+    "$ref": "package.json#/name"
+  },
   "branch": "default",
-  "version": { "$ref": "package.json#/version" },
+  "version": {
+    "$ref": "package.json#/version"
+  },
   "type": "FEATURE",
   "title": "Connecting Accounts",
-  "description": { "$ref": "package.json#/description" },
-  "main": { "$ref": "package.json#/main" },
+  "description": {
+    "$ref": "package.json#/description"
+  },
+  "main": {
+    "$ref": "package.json#/main"
+  },
   "icon": "src/icons/connected-accounts.png",
-  "contextIds": ["twitter-adapter.dapplet-base.eth"],
+  "contextIds": [
+    "ca-virtual-adapter.dapplet-base.eth"
+  ],
   "dependencies": {
-    "twitter-adapter.dapplet-base.eth": "0.9.0"
+    "ca-virtual-adapter.dapplet-base.eth": "0.1.0"
   },
   "overlays": {
     "connecting-accounts-overlay": "https://localhost:3000"
