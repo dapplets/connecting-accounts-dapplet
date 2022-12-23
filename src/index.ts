@@ -173,6 +173,7 @@ export default class ConnectingAccountsDapplet {
                     return waitForRequestResolve(id)
                 } else {
                     state.global.madeRequest.next(false)
+                    updateAll()
                     return requestStatus
                 }
             } catch (err) {}
@@ -232,10 +233,7 @@ export default class ConnectingAccountsDapplet {
             overlay.open()
             updateAll()
         })
-        if (Core.onConnectedAccountsUpdate)
-            Core.onConnectedAccountsUpdate(() => {
-                updateAll()
-            })
+        Core.onConnectedAccountsUpdate?.(updateAll)
 
         const { avatarBadge } = this.adapter.exports
         const addBadge =
