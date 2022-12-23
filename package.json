@@ -1,6 +1,6 @@
 {
   "name": "connecting-accounts-dapplet",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "This dapplet allows you to link your accounts using the Connected Accounts service",
   "main": "lib/index.js",
   "scripts": {
@@ -17,7 +17,7 @@
   "author": "Dapplets Project",
   "license": "MIT",
   "devDependencies": {
-    "@dapplets/dapplet-extension": "latest",
+    "@dapplets/dapplet-extension": "develop",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-image": "^2.1.1",
     "@rollup/plugin-json": "^4.1.0",

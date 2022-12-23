@@ -193,7 +193,7 @@ export default class ConnectingAccountsDapplet {
                 let madeRequest = false
                 let madeRequestId = -1
                 const twitterId =
-                    state.global.userWebsite.value +
+                    state.global.userWebsiteId.value +
                     '/' +
                     state.global?.websiteName.value.toLowerCase()
                 const nearId = state.global.userNearId.value + '/near/testnet'
@@ -232,6 +232,10 @@ export default class ConnectingAccountsDapplet {
             overlay.open()
             updateAll()
         })
+        if (Core.onConnectedAccountsUpdate)
+            Core.onConnectedAccountsUpdate(() => {
+                updateAll()
+            })
 
         const { avatarBadge } = this.adapter.exports
         const addBadge =
