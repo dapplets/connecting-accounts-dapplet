@@ -3,6 +3,7 @@ import NEAR_ICON from './icons/near_black.svg'
 import NEAR_ICON_SMALL from './icons/near_black_small.svg'
 import TWITTER_ICON from './icons/twitter-icon.svg'
 import GITHUB_ICON from './icons/github.svg'
+import ETH_ICON from './icons/eth.svg'
 import { IBridge, IConnectedAccountUser, IStorage } from './types'
 
 @Injectable
@@ -90,6 +91,8 @@ export default class ConnectingAccountsDapplet {
                             ? TWITTER_ICON
                             : origin1 === 'github'
                             ? GITHUB_ICON
+                            : origin1 === 'ethereum'
+                            ? ETH_ICON
                             : NEAR_ICON
                     const account: IConnectedAccountUser = {
                         name,
