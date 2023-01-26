@@ -37,4 +37,5 @@ export interface IConnectedAccountUser {
     name: string
     origin: string
     accountActive: boolean
+    closeness: number
 }

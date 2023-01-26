@@ -87,6 +87,7 @@ export default (props: IDappStateProps<IStorage>) => {
             )
         }
         const hasWebsiteIdNearId = sharedState[sharedState.global.userWebsiteId]?.connectedAccounts
+            ?.filter((x) => x.closeness === 1)
             ?.map((x) => x.name)
             .includes(sharedState.global.userNearId)
         if (hasWebsiteIdNearId) {

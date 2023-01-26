@@ -83,26 +83,29 @@ export default class ConnectingAccountsDapplet {
                     accountId,
                     originId
                 )
-                const accounts = connectedAccounts.flat().map((a) => {
-                    const [name, origin1, origin2] = a.id.split('/')
-                    const origin = origin2 === undefined ? origin1 : origin1 + '/' + origin2
-                    const img =
-                        origin1 === 'twitter'
-                            ? TWITTER_ICON
-                            : origin1 === 'github'
-                            ? GITHUB_ICON
-                            : origin1 === 'ethereum'
-                            ? ETH_ICON
-                            : NEAR_ICON
-                    const account: IConnectedAccountUser = {
-                        name,
-                        img,
-                        origin,
-                        accountActive: a.status.isMain,
-                    }
-                    return account
-                })
-                return accounts
+                const accounts = connectedAccounts.map((pairs, i) =>
+                    pairs.map((a) => {
+                        const [name, origin1, origin2] = a.id.split('/')
+                        const origin = origin2 === undefined ? origin1 : origin1 + '/' + origin2
+                        const img =
+                            origin1 === 'twitter'
+                                ? TWITTER_ICON
+                                : origin1 === 'github'
+                                ? GITHUB_ICON
+                                : origin1 === 'ethereum'
+                                ? ETH_ICON
+                                : NEAR_ICON
+                        const account: IConnectedAccountUser = {
+                            name,
+                            img,
+                            origin,
+                            accountActive: a.status.isMain,
+                            closeness: i + 1,
+                        }
+                        return account
+                    })
+                )
+                return accounts.flat()
             } catch (err) {}
         }
 
