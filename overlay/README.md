@@ -1,13 +1,12 @@
-# Example of Usage: Overlay based on React.js
+# The overlay for Connecting Accounts Dapplet
 
 ## Getting Started
 
-To run the example you need to run the following commands:
+To run the overlay you need to run the following commands:
 
 ```
-cd examples/react-overlay
 npm i
 npm start
 ```
 
-The last two commands might need to run several times
+IMPORTANT: When you run the dapplet using an npm script, you don't need to run the overlay separately.
