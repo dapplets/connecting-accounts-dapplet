@@ -25,6 +25,12 @@ export default class ConnectingAccountsDapplet {
         }
         const state = Core.state(defaultState)
 
+        const systemConnectedAccountsNetwork: 'mainnet' | 'testnet' =
+            Core.getPreferredConnectedAccountsNetwork // ToDo: the method's appeared in 0.53.0. Remove the check after 0.55.0 will be released
+                ? await Core.getPreferredConnectedAccountsNetwork()
+                : 'testnet'
+        const systemConnectedAccountsOrigin = 'near/' + systemConnectedAccountsNetwork
+
         const updateWebsiteUserInfo = () => {
             const user: {
                 username: string
@@ -40,7 +46,9 @@ export default class ConnectingAccountsDapplet {
 
         const checkWalletConnection = async () => {
             const prevSessions = await Core.sessions()
-            const prevSession = prevSessions.find((x) => x.authMethod === 'near/testnet')
+            const prevSession = prevSessions.find(
+                (x) => x.authMethod === systemConnectedAccountsOrigin
+            )
             if (prevSession) {
                 const wallet = await prevSession.wallet()
                 state.global.userNearId.next(wallet.accountId)
@@ -55,13 +63,21 @@ export default class ConnectingAccountsDapplet {
         const login = async () => {
             try {
                 const prevSessions = await Core.sessions()
-                const prevSession = prevSessions.find((x) => x.authMethod === 'near/testnet')
+                const prevSession = prevSessions.find(
+                    (x) => x.authMethod === systemConnectedAccountsOrigin
+                )
                 let session =
                     prevSession ??
-                    (await Core.login({ authMethods: ['near/testnet'], target: overlay }))
+                    (await Core.login({
+                        authMethods: [systemConnectedAccountsOrigin],
+                        target: overlay,
+                    }))
                 let wallet = await session.wallet()
                 if (!wallet) {
-                    session = await Core.login({ authMethods: ['near/testnet'], target: overlay })
+                    session = await Core.login({
+                        authMethods: [systemConnectedAccountsOrigin],
+                        target: overlay,
+                    })
                     wallet = await session.wallet()
                 }
                 state.global.userNearId.next(wallet.accountId)
@@ -151,7 +167,7 @@ export default class ConnectingAccountsDapplet {
                         firstOriginId: state.global?.websiteName.value.toLowerCase(),
                         firstAccountImage: this.adapter.getCurrentUser().img,
                         secondAccountId: state.global?.userNearId.value,
-                        secondOriginId: 'near/testnet',
+                        secondOriginId: systemConnectedAccountsOrigin,
                         secondAccountImage: null,
                         firstProofUrl:
                             `https://${state.global?.websiteName.value.toLowerCase()}.com/` +
@@ -159,7 +175,7 @@ export default class ConnectingAccountsDapplet {
                         isUnlink,
                     },
                     {
-                        type: `${state.global?.websiteName.value.toLowerCase()}/near-testnet`,
+                        type: `${state.global?.websiteName.value.toLowerCase()}/near-${systemConnectedAccountsNetwork}`,
                         user: state.global?.userWebsiteFullname.value,
                     }
                 )
@@ -203,7 +219,7 @@ export default class ConnectingAccountsDapplet {
                     state.global.userWebsiteId.value +
                     '/' +
                     state.global?.websiteName.value.toLowerCase()
-                const nearId = state.global.userNearId.value + '/near/testnet'
+                const nearId = state.global.userNearId.value + '/' + systemConnectedAccountsOrigin
                 requests.forEach((request, i) => {
                     if (
                         (request.firstAccount === twitterId && request.secondAccount === nearId) ||
