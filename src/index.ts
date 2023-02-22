@@ -22,14 +22,19 @@ export default class ConnectingAccountsDapplet {
             websiteName: '',
             userNearId: '',
             madeRequest: false,
+            systemConnectedAccountsNetwork: '',
+            systemConnectedAccountsOrigin: '',
         }
         const state = Core.state(defaultState)
 
-        const systemConnectedAccountsNetwork: 'mainnet' | 'testnet' =
+        state.global.systemConnectedAccountsNetwork.next(
             Core.getPreferredConnectedAccountsNetwork // ToDo: the method's appeared in 0.53.0. Remove the check after 0.55.0 will be released
                 ? await Core.getPreferredConnectedAccountsNetwork()
                 : 'testnet'
-        const systemConnectedAccountsOrigin = 'near/' + systemConnectedAccountsNetwork
+        )
+        state.global.systemConnectedAccountsOrigin.next(
+            'near/' + state.global.systemConnectedAccountsNetwork.value
+        )
 
         const updateWebsiteUserInfo = () => {
             const user: {
@@ -47,7 +52,7 @@ export default class ConnectingAccountsDapplet {
         const checkWalletConnection = async () => {
             const prevSessions = await Core.sessions()
             const prevSession = prevSessions.find(
-                (x) => x.authMethod === systemConnectedAccountsOrigin
+                (x) => x.authMethod === state.global.systemConnectedAccountsOrigin.value
             )
             if (prevSession) {
                 const wallet = await prevSession.wallet()
@@ -64,18 +69,18 @@ export default class ConnectingAccountsDapplet {
             try {
                 const prevSessions = await Core.sessions()
                 const prevSession = prevSessions.find(
-                    (x) => x.authMethod === systemConnectedAccountsOrigin
+                    (x) => x.authMethod === state.global.systemConnectedAccountsOrigin.value
                 )
                 let session =
                     prevSession ??
                     (await Core.login({
-                        authMethods: [systemConnectedAccountsOrigin],
+                        authMethods: [state.global.systemConnectedAccountsOrigin.value],
                         target: overlay,
                     }))
                 let wallet = await session.wallet()
                 if (!wallet) {
                     session = await Core.login({
-                        authMethods: [systemConnectedAccountsOrigin],
+                        authMethods: [state.global.systemConnectedAccountsOrigin.value],
                         target: overlay,
                     })
                     wallet = await session.wallet()
@@ -167,7 +172,7 @@ export default class ConnectingAccountsDapplet {
                         firstOriginId: state.global?.websiteName.value.toLowerCase(),
                         firstAccountImage: this.adapter.getCurrentUser().img,
                         secondAccountId: state.global?.userNearId.value,
-                        secondOriginId: systemConnectedAccountsOrigin,
+                        secondOriginId: state.global?.systemConnectedAccountsOrigin.value,
                         secondAccountImage: null,
                         firstProofUrl:
                             `https://${state.global?.websiteName.value.toLowerCase()}.com/` +
@@ -175,7 +180,9 @@ export default class ConnectingAccountsDapplet {
                         isUnlink,
                     },
                     {
-                        type: `${state.global?.websiteName.value.toLowerCase()}/near-${systemConnectedAccountsNetwork}`,
+                        type: `${state.global?.websiteName.value.toLowerCase()}/near-${
+                            state.global.systemConnectedAccountsNetwork.value
+                        }`,
                         user: state.global?.userWebsiteFullname.value,
                     }
                 )
@@ -219,7 +226,10 @@ export default class ConnectingAccountsDapplet {
                     state.global.userWebsiteId.value +
                     '/' +
                     state.global?.websiteName.value.toLowerCase()
-                const nearId = state.global.userNearId.value + '/' + systemConnectedAccountsOrigin
+                const nearId =
+                    state.global.userNearId.value +
+                    '/' +
+                    state.global.systemConnectedAccountsOrigin.value
                 requests.forEach((request, i) => {
                     if (
                         (request.firstAccount === twitterId && request.secondAccount === nearId) ||
@@ -233,6 +243,24 @@ export default class ConnectingAccountsDapplet {
                     state.global.madeRequest.next(madeRequest)
                 }
                 if (madeRequest && madeRequestId !== -1) waitForRequestResolve(madeRequestId)
+            }
+
+            // ToDo: the method's appeared in 0.53.0. Remove the check after 0.55.0 will be released
+            if (Core.getPreferredConnectedAccountsNetwork) {
+                const currentPreferredConnectedAccountsNetwork =
+                    await Core.getPreferredConnectedAccountsNetwork()
+                if (
+                    state.global.systemConnectedAccountsNetwork.value !==
+                    currentPreferredConnectedAccountsNetwork
+                ) {
+                    await logout()
+                    state.global.systemConnectedAccountsNetwork.next(
+                        currentPreferredConnectedAccountsNetwork
+                    )
+                    state.global.systemConnectedAccountsOrigin.next(
+                        'near/' + state.global.systemConnectedAccountsNetwork.value
+                    )
+                }
             }
         }
 

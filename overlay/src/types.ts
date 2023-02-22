@@ -10,6 +10,8 @@ export interface IStorage {
     websiteName: string
     userNearId: string
     madeRequest: boolean
+    systemConnectedAccountsNetwork: 'mainnet' | 'testnet' | ''
+    systemConnectedAccountsOrigin: string
 }
 
 export interface IBridge {
