@@ -1,4 +1,6 @@
-# Connecting Accounts Dapplet
+![connecting-accounts-dapplet](https://user-images.githubusercontent.com/43613968/221561872-3be80296-2520-4cd3-81f8-9b0242eb5fc3.jpg)
+
+# Connected Accounts Dapplet
 
 This dapplet is a part of Connected Accounts service for [Dapplets].
 
