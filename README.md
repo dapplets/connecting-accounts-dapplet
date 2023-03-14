@@ -1,4 +1,4 @@
-![connecting-accounts-dapplet](https://user-images.githubusercontent.com/43613968/221561872-3be80296-2520-4cd3-81f8-9b0242eb5fc3.jpg)
+<img width="1245" alt="connecting-accounts-dapplet" src="https://user-images.githubusercontent.com/43613968/225055074-ed48e91f-9bb6-4a69-a369-c5354c837b00.png">
 
 # Connected Accounts Dapplet
 
