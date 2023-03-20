@@ -44,9 +44,9 @@ export default class ConnectingAccountsDapplet {
                 websiteName: 'GitHub' | 'Twitter'
             } = this.adapter.getCurrentUser()
             if (!user) return
-            state.global.userWebsiteId.next(user.username)
-            state.global.userWebsiteFullname.next(user.fullname)
-            state.global.websiteName.next(user.websiteName)
+            user.username && state.global.userWebsiteId.next(user.username)
+            user.fullname && state.global.userWebsiteFullname.next(user.fullname)
+            user.websiteName && state.global.websiteName.next(user.websiteName)
         }
 
         const checkWalletConnection = async () => {

@@ -47,13 +47,11 @@ export default (props: IDappStateProps<IStorage>) => {
     const addForm = () => {
         if (sharedState.global.userWebsiteId === '') {
             return (
-                <Form
-                    title="Connecting Accounts"
-                    buttonLabel="Update"
-                    action={handleUpdate}
-                    loading={isWaiting}
-                >
-                    <p>To start you have to sign in to {sharedState.global.websiteName}</p>
+                <Form title="Connecting Accounts" loading={isWaiting}>
+                    <p>
+                        To connect or disconnect your accounts, you need to be logged into{' '}
+                        {sharedState.global.websiteName}.
+                    </p>
                 </Form>
             )
         }

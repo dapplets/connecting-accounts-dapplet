@@ -26,8 +26,8 @@ export interface IBridge {
 
 export interface IFormProps {
     title: string
-    buttonLabel: string
-    action: MouseEventHandler<HTMLButtonElement>
+    buttonLabel?: string
+    action?: MouseEventHandler<HTMLButtonElement>
     buttonLabel2?: string
     action2?: MouseEventHandler<HTMLButtonElement>
     loading: boolean
