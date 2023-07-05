@@ -9,7 +9,10 @@ import { IBridge, IConnectedAccountUser, IStorage } from './types'
 @Injectable
 export default class ConnectingAccountsDapplet {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any,  @typescript-eslint/explicit-module-boundary-types
-    @Inject('ca-virtual-adapter.dapplet-base.eth') public adapter: any
+    @Inject('twitter-config.dapplet-base.eth') public adapter: any
+
+    // current user from twitter
+    private _globalContext = {};
 
     async activate() {
         const defaultState: IStorage = {
@@ -42,7 +45,7 @@ export default class ConnectingAccountsDapplet {
                 fullname: string
                 img: string
                 websiteName: 'GitHub' | 'Twitter'
-            } = this.adapter.getCurrentUser()
+            } = this._globalContext
             if (!user) return
             user.username && state.global.userWebsiteId.next(user.username)
             user.fullname && state.global.userWebsiteFullname.next(user.fullname)
@@ -170,7 +173,7 @@ export default class ConnectingAccountsDapplet {
                     {
                         firstAccountId: state.global?.userWebsiteId.value,
                         firstOriginId: state.global?.websiteName.value.toLowerCase(),
-                        firstAccountImage: this.adapter.getCurrentUser().img,
+                        firstAccountImage: this._globalContext.img,
                         secondAccountId: state.global?.userNearId.value,
                         secondOriginId: state.global?.systemConnectedAccountsOrigin.value,
                         secondAccountImage: null,
@@ -319,6 +322,11 @@ export default class ConnectingAccountsDapplet {
                 })
             }
         this.adapter.attachConfig({
+            GLOBAL: (global) => {
+                // Save reference to the global context
+                Object.assign(this._globalContext, global);
+                updateWebsiteUserInfo();
+            },
             PROFILE: addBadge('PROFILE'),
             POST: addBadge('POST'),
         })

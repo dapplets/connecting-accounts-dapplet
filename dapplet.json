@@ -16,10 +16,10 @@
   },
   "icon": "src/icons/connected-accounts.png",
   "contextIds": [
-    "ca-virtual-adapter.dapplet-base.eth"
+    "twitter-config.dapplet-base.eth"
   ],
   "dependencies": {
-    "ca-virtual-adapter.dapplet-base.eth": "0.1.0"
+    "twitter-config.dapplet-base.eth": "0.1.5"
   },
   "overlays": {
     "connecting-accounts-overlay": "https://localhost:3000"
