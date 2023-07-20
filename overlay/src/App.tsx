@@ -32,12 +32,7 @@ export default (props: IDappStateProps<IStorage>) => {
     const makeRequest = (requestFn: () => Promise<number>) => async (e: any) => {
         e.preventDefault()
         setIsWaiting(true)
-        const requestId = await requestFn()
-        if (requestId >= 0) {
-            changeSharedState?.({ madeRequest: true })
-            await bridge.waitForRequestResolve(requestId)
-        }
-        await bridge.updateAll()
+        await requestFn()
         setIsWaiting(false)
     }
 

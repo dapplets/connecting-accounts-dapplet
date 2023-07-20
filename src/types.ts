@@ -43,3 +43,14 @@ export interface IGlobalContext {
     img?: string
     websiteName?: 'GitHub' | 'Twitter'
 }
+
+export type TConnectedAccountsVerificationRequestInfo = {
+    firstAccount: string
+    secondAccount: string
+    isUnlink: boolean
+    firstProofUrl: string
+    secondProofUrl: string
+    transactionSender: string
+}
+
+export type CARequestStatus = 'not found' | 'pending' | 'approved' | 'rejected'
