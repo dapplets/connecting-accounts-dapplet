@@ -4,7 +4,7 @@ import NEAR_ICON_SMALL from './icons/near_black_small.svg'
 import TWITTER_ICON from './icons/twitter-icon.svg'
 import GITHUB_ICON from './icons/github.svg'
 import ETH_ICON from './icons/eth.svg'
-import { IBridge, IConnectedAccountUser, IStorage } from './types'
+import { IBridge, IConnectedAccountUser, IGlobalContext, IStorage } from './types'
 
 @Injectable
 export default class ConnectingAccountsDapplet {
@@ -12,7 +12,7 @@ export default class ConnectingAccountsDapplet {
     @Inject('twitter-config.dapplet-base.eth') public adapter: any
 
     // current user from twitter
-    private _globalContext = {};
+    private _globalContext: IGlobalContext = {}
 
     async activate() {
         const defaultState: IStorage = {
@@ -40,12 +40,7 @@ export default class ConnectingAccountsDapplet {
         )
 
         const updateWebsiteUserInfo = () => {
-            const user: {
-                username: string
-                fullname: string
-                img: string
-                websiteName: 'GitHub' | 'Twitter'
-            } = this._globalContext
+            const user = this._globalContext
             if (!user) return
             user.username && state.global.userWebsiteId.next(user.username)
             user.fullname && state.global.userWebsiteFullname.next(user.fullname)
@@ -322,10 +317,10 @@ export default class ConnectingAccountsDapplet {
                 })
             }
         this.adapter.attachConfig({
-            GLOBAL: (global) => {
+            GLOBAL: (global: IGlobalContext) => {
                 // Save reference to the global context
-                Object.assign(this._globalContext, global);
-                updateWebsiteUserInfo();
+                Object.assign(this._globalContext, global)
+                updateWebsiteUserInfo()
             },
             PROFILE: addBadge('PROFILE'),
             POST: addBadge('POST'),

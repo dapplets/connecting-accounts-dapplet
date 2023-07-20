@@ -36,3 +36,10 @@ export interface IConnectedAccountUser {
     accountActive: boolean
     closeness: number
 }
+
+export interface IGlobalContext {
+    username?: string
+    fullname?: string
+    img?: string
+    websiteName?: 'GitHub' | 'Twitter'
+}
