@@ -36,3 +36,21 @@ export interface IConnectedAccountUser {
     accountActive: boolean
     closeness: number
 }
+
+export interface IGlobalContext {
+    username?: string
+    fullname?: string
+    img?: string
+    websiteName?: 'GitHub' | 'Twitter'
+}
+
+export type TConnectedAccountsVerificationRequestInfo = {
+    firstAccount: string
+    secondAccount: string
+    isUnlink: boolean
+    firstProofUrl: string
+    secondProofUrl: string
+    transactionSender: string
+}
+
+export type CARequestStatus = 'not found' | 'pending' | 'approved' | 'rejected'

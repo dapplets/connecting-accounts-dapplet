@@ -4,7 +4,14 @@ import NEAR_ICON_SMALL from './icons/near_black_small.svg'
 import TWITTER_ICON from './icons/twitter-icon.svg'
 import GITHUB_ICON from './icons/github.svg'
 import ETH_ICON from './icons/eth.svg'
-import { IBridge, IConnectedAccountUser, IStorage } from './types'
+import {
+    IBridge,
+    IConnectedAccountUser,
+    IGlobalContext,
+    IStorage,
+    TConnectedAccountsVerificationRequestInfo,
+    CARequestStatus,
+} from './types'
 
 @Injectable
 export default class ConnectingAccountsDapplet {
@@ -12,7 +19,7 @@ export default class ConnectingAccountsDapplet {
     @Inject('twitter-config.dapplet-base.eth') public adapter: any
 
     // current user from twitter
-    private _globalContext = {};
+    private _globalContext: IGlobalContext = {}
 
     async activate() {
         const defaultState: IStorage = {
@@ -40,12 +47,7 @@ export default class ConnectingAccountsDapplet {
         )
 
         const updateWebsiteUserInfo = () => {
-            const user: {
-                username: string
-                fullname: string
-                img: string
-                websiteName: 'GitHub' | 'Twitter'
-            } = this._globalContext
+            const user = this._globalContext
             if (!user) return
             user.username && state.global.userWebsiteId.next(user.username)
             user.fullname && state.global.userWebsiteFullname.next(user.fullname)
@@ -166,10 +168,48 @@ export default class ConnectingAccountsDapplet {
             } catch (err) {}
         }
 
+        const createAccountGlobalId = (username: string, websiteName: string): string =>
+            username + '/' + websiteName.toLowerCase()
+
+        const getCAPendingRequest = async (
+            accountGId: string
+        ): Promise<{
+            pendingRequest: TConnectedAccountsVerificationRequestInfo
+            pendingRequestId: number
+        }> => {
+            const pendingRequestsIds = await Core.connectedAccounts.getPendingRequests()
+            if (pendingRequestsIds && pendingRequestsIds.length) {
+                for (const id of pendingRequestsIds) {
+                    const request = await Core.connectedAccounts.getVerificationRequest(id)
+                    if (
+                        request.firstAccount === accountGId ||
+                        request.secondAccount === accountGId
+                    ) {
+                        return { pendingRequest: request, pendingRequestId: id }
+                    }
+                }
+            }
+            return { pendingRequest: null, pendingRequestId: -1 }
+        }
+
+        const waitForRequestResolve = async (id: number): Promise<CARequestStatus> => {
+            try {
+                const requestStatus = await Core.connectedAccounts.getRequestStatus(id)
+                if (requestStatus === 'pending') {
+                    await new Promise((res) => setTimeout(res, 5000))
+                    return waitForRequestResolve(id)
+                } else {
+                    state.global.madeRequest.next(false)
+                    updateAll()
+                    return requestStatus
+                }
+            } catch (err) {}
+        }
+
         const makeConnectionRequest = (isUnlink: boolean) => async () => {
             updateWebsiteUserInfo()
             try {
-                const requestId = await Core.connectedAccounts.requestVerification(
+                await Core.connectedAccounts.requestVerification(
                     {
                         firstAccountId: state.global?.userWebsiteId.value,
                         firstOriginId: state.global?.websiteName.value.toLowerCase(),
@@ -189,27 +229,22 @@ export default class ConnectingAccountsDapplet {
                         user: state.global?.userWebsiteFullname.value,
                     }
                 )
-                if (requestId === -1) return makeConnectionRequest(isUnlink)()
-                return requestId
+                const accountGId = createAccountGlobalId(
+                    state.global?.userWebsiteId.value,
+                    state.global?.websiteName.value
+                )
+                const { pendingRequest, pendingRequestId } = await getCAPendingRequest(accountGId)
+                if (pendingRequestId !== -1 && pendingRequest) {
+                    state.global.madeRequest.next(true)
+                    const requestStatus = await waitForRequestResolve(pendingRequestId)
+                    return requestStatus
+                }
+                return makeConnectionRequest(isUnlink)()
             } catch (err) {}
         }
 
         const connectAccounts = makeConnectionRequest(false)
         const disconnectAccounts = makeConnectionRequest(true)
-
-        const waitForRequestResolve = async (id: number): Promise<any> => {
-            try {
-                const requestStatus = await Core.connectedAccounts.getRequestStatus(id)
-                if (requestStatus === 'pending') {
-                    await new Promise((res) => setTimeout(res, 5000))
-                    return waitForRequestResolve(id)
-                } else {
-                    state.global.madeRequest.next(false)
-                    updateAll()
-                    return requestStatus
-                }
-            } catch (err) {}
-        }
 
         const updateAll = async () => {
             updateWebsiteUserInfo()
@@ -322,10 +357,10 @@ export default class ConnectingAccountsDapplet {
                 })
             }
         this.adapter.attachConfig({
-            GLOBAL: (global) => {
+            GLOBAL: (global: IGlobalContext) => {
                 // Save reference to the global context
-                Object.assign(this._globalContext, global);
-                updateWebsiteUserInfo();
+                Object.assign(this._globalContext, global)
+                updateWebsiteUserInfo()
             },
             PROFILE: addBadge('PROFILE'),
             POST: addBadge('POST'),
