@@ -1,12 +1,13 @@
-import { expect, test } from "../fixtures/dapplet-runner";
+import { expect, test } from "@dapplets/dapplet-playwright";
 
-const urlToOpen = 'https://twitter.com/teremovskii'
-const dappletIdToActivate = 'connecting-accounts-dapplet'
+const urlToOpen = "https://github.com/Ni-2";
+const urlToCheck = "https://twitter.com/teremovskii";
+const dappletIdToActivate = "connecting-accounts-dapplet";
 const registryUrl = "http://localhost:3001/dapplet.json"
 
-// ToDo: Qase ID = 34
-// ToDo: unskip when popup will be implemented
-test.skip("should open popup with accounts on Twitter", async ({
+// ToDo: Qase ID = 3
+// ToDo: unskip test when GitHub and popups will be implemented
+test.skip("should open popup with accounts on GitHub", async ({
   page,
   enableDevServer,
   activateDapplet,
@@ -17,7 +18,8 @@ test.skip("should open popup with accounts on Twitter", async ({
   await activateDapplet(dappletIdToActivate, registryUrl);
 
   // find avatar badge
-  await expect(page.locator(".dapplet-widget")).toBeVisible();
+  const avatarBadge = page.locator(".dapplet-widget");
+  await expect(avatarBadge).toBeVisible();
 
   // popup is not visible
   const accounts = page
@@ -41,6 +43,16 @@ test.skip("should open popup with accounts on Twitter", async ({
   await expect(
     page.locator(".dapplets-connected-accounts-wrapper >> .accounts")
   ).toBeVisible();
+
+  const accountLink = await page.locator(
+    ".dapplets-connected-accounts-wrapper >> .account:has-text('teremovskii')"
+  );
+
+  const accountLinkAttributes = await accountLink.getAttribute("href");
+  expect(accountLinkAttributes).toBe(urlToCheck);
+
+  const accountLinkTarget = await accountLink.getAttribute("target");
+  expect(accountLinkTarget).toBe("_blank");
 
   // popup closes after click
   await expect(

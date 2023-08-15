@@ -1,4 +1,4 @@
-import { expect, test } from "../fixtures/dapplet-runner";
+import { expect, test } from "@dapplets/dapplet-playwright";
 
 const urlToOpen = "https://twitter.com/teremovskii";
 const dappletIdToActivate = "connecting-accounts-dapplet";
