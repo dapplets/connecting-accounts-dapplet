@@ -1,3 +1,4 @@
+import { BrowserOptions } from "@dapplets/dapplet-playwright";
 import { defineConfig, devices } from "@playwright/test";
 import dotenv from "dotenv";
 
@@ -12,7 +13,7 @@ dotenv.config();
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+export default defineConfig<BrowserOptions>({
   testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: true,
