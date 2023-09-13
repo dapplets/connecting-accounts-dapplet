@@ -1,6 +1,6 @@
 {
   "name": "connecting-accounts-dapplet",
-  "version": "0.1.35",
+  "version": "0.1.37",
   "description": "This dapplet allows you to link your accounts using the Connected Accounts service",
   "main": "lib/index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "build": "rollup --config rollup.config.js",
     "prettify": "npx prettier --write .",
     "lint": "npx eslint .",
-    "test": "playwright test"
+    "test": "playwright test",
+    "cd": "concurrently -c \"yellow,green\" -n \"dapplet,cli\" \"npm start\" \"npx @dapplets/cli@latest deploy connecting-accounts-dapplet -I\" -ks \"command-cli\""
   },
   "cacheDirectories": [
     "node_modules",
@@ -29,7 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.11.0",
     "adm-zip": "^0.5.10",
-    "concurrently": "^6.0.0",
+    "concurrently": "^8.2.1",
     "dotenv": "^16.3.1",
     "eslint": "^8.8.0",
     "eslint-config-airbnb-typescript": "^16.1.0",
