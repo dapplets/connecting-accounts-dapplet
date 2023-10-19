@@ -41,7 +41,7 @@ export default defineConfig<BrowserOptions>({
             use: {
                 ...devices['Desktop Chrome'],
                 newHeadless: process.env.CI ? true : false,
-                extensionVersion: 'v0.60.0-alpha.2',
+                extensionVersion: 'latest',
             },
         },
 
