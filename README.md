@@ -1,4 +1,5 @@
-<img width="1245" alt="connecting-accounts-dapplet" src="https://user-images.githubusercontent.com/43613968/225055074-ed48e91f-9bb6-4a69-a369-c5354c837b00.png">
+![connecting-accounts-dapplet](https://github.com/dapplets/connecting-accounts-dapplet/blob/bb737a78bd97a5109ac888e0852ec2176b520198/docs/connecting-accounts-dapplet.jpg#gh-light-mode-only)
+![connecting-accounts-dapplet](https://github.com/dapplets/connecting-accounts-dapplet/blob/bb737a78bd97a5109ac888e0852ec2176b520198/docs/connecting-accounts-dapplet-dark.jpg#gh-dark-mode-only)
 
 # Connected Accounts Dapplet
 
@@ -8,18 +9,18 @@ It allows you to pair accounts of various social networks with blockchain accoun
 
 Types of links that can be created using the dapplet at the moment:
 
--   NEAR Testnet + Twitter
--   NEAR Testnet + GitHub
+- NEAR Testnet + Twitter
+- NEAR Testnet + GitHub
 
 It also adds widgets to social media pages that display your connected accounts. Currently you can see them:
 
--   Twitter profile avatar on the profile page and on tweets
--   GitHub profile avatar on the profile page
+- Twitter profile avatar on the profile page and on tweets
+- GitHub profile avatar on the profile page
 
 ## See also:
 
--   [Connected Accounts Smart Contract]
--   [Dapplets Browser Extension]
+- [Connected Accounts Smart Contract]
+- [Dapplets Browser Extension]
 
 ## Quick Start
 
