@@ -1,5 +1,5 @@
-![connecting-accounts-dapplet](https://github.com/dapplets/connecting-accounts-dapplet/blob/bb737a78bd97a5109ac888e0852ec2176b520198/docs/connecting-accounts-dapplet.jpg#gh-light-mode-only)
-![connecting-accounts-dapplet](https://github.com/dapplets/connecting-accounts-dapplet/blob/bb737a78bd97a5109ac888e0852ec2176b520198/docs/connecting-accounts-dapplet-dark.jpg#gh-dark-mode-only)
+![connecting-accounts-dapplet](/docs/light.png#gh-light-mode-only)
+![connecting-accounts-dapplet](/docs/dark.png#gh-dark-mode-only)
 
 # Connected Accounts Dapplet
 
